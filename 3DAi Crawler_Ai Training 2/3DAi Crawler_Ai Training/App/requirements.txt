@@ -1,0 +1,14 @@
+torch
+transformers
+spacy==3.5.1
+celery==5.2.7
+beautifulsoup4
+requests==2.28.2
+redis==4.5.5
+pillow==9.4.0
+Werkzeug==2.0.3
+numpy==1.22.4
+flask
+thinc>=8.1.8,<8.2.0  # Ensure compatibility with spacy
+scikit-learn
+joblib

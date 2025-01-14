@@ -1,0 +1,45 @@
+services:
+  web:
+    build:
+      context: ./app # Build context is now the app directory
+      dockerfile: Dockerfile # Dockerfile is still in the app directory
+    command: flask run --host=0.0.0.0 --port=5000 # Use Gunicorn in production
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    networks:
+      - backend
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1 # Or 'all' for all GPUs
+              capabilities: [gpu]
+
+  celery:
+    build:
+      context: ./app # Build context is now the app directory
+      dockerfile: Dockerfile # Dockerfile is still in the app directory
+    command: celery -A app.celery_app worker --loglevel=info --uid=1000 --gid=1000
+    depends_on:
+      - redis
+    networks:
+      - backend
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1 # Or 'all' for all GPUs
+              capabilities: [gpu]
+
+  redis:
+    image: redis:7.4.2-alpine
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
